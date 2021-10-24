@@ -1,0 +1,91 @@
+# используется для сортировки
+from operator import itemgetter
+
+
+class language:
+    def __init__(self, id, title,year_app, tool_id):
+        self.id = id
+        self.title = title
+        self.year_app = year_app
+        self.tool_id = tool_id
+
+
+class tool:
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
+
+class LangTool:
+    def __init__(self, tool_id, lang_id):
+        self.tool_id = tool_id
+        self.lang_id = lang_id
+
+
+tools = [tool(1,"Visual Studio"),
+         tool(2,"Visual Studio Code"),
+         tool(3, "XCode"),
+         tool(4, 'Android Studio')]
+
+languages = [ language(1, 'Python', 1991, 1),
+              language(2, 'C++', 1983, 2),
+              language(3, 'Assembly', 1949, 3),
+              language(4, 'Pascal', 1970, 4),
+              language(5, 'Java', 1995, 4)]
+
+lang_tool = [
+    LangTool(1, 1),
+    LangTool(1, 2),
+    LangTool(1, 3),
+    LangTool(2, 2),
+    LangTool(2, 4),
+    LangTool(3, 1),
+    LangTool(3, 2),
+    LangTool(3, 5),
+
+]
+
+
+def main():
+    one_to_many = [(l.title, l.year_app, t.name)
+                   for t in tools
+                   for l in languages
+                   if l.tool_id == t.id]
+
+    many_to_many = [(l.title, l.year_app, t.name)
+                    for t in tools
+                    for l in languages
+                    for relation in lang_tool
+                    if t.id == relation.tool_id and l.id == relation.lang_id]
+
+
+    print('Задание Г1')
+    for i in range(len(one_to_many)):
+        if((one_to_many[i][2])[0]=='A'):
+            print(one_to_many[i])
+
+    print('\nЗадание Г2')
+    res_2_unsorted = []
+    # Перебираем все среды программирования
+    for t in tools:
+        # Список языков сред программирования
+        t_lang = list(filter(lambda x: x[2] == t.name, one_to_many))
+        # Если среда программирования не пуста
+        if len(t_lang) > 0:
+            res_2_unsorted.append((t.name, max(t_lang, key=lambda x: x[1])[1]))
+
+    # Сортировка по новизне
+    res_2 = sorted(res_2_unsorted, key=itemgetter(1), reverse=True)
+    print(res_2)
+
+    print('\nЗадание Г3')
+    res_3 = []
+    # Перебираем все среды программирования
+    for lang, _, tool in many_to_many:
+        res_3.append((lang, tool))
+    res_3 = sorted(res_3, key=itemgetter(1))
+    print(res_3)
+
+
+if __name__ == '__main__':
+    main()
